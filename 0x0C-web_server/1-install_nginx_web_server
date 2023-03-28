@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Install nginx on web server; Nginx should be listening on port 80
+
+apt-get update
+apt-get -y install nginx
+
+/etc/init.d/nginx start
+
+echo "server {
+        listen 80;
+        location / {
+                echo 'Hello World!';
+	}
+}" > /etc/nginx/sites-available/default
+/etc/init.d/nginx reload
