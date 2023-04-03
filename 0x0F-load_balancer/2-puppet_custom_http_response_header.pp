@@ -1,17 +1,16 @@
 # Install Nginx package
-package { 'nginx':
-  ensure => installed,
+exec {'update':
+  command => '/usr/bin/apt-get update',
 }
+-> package {'nginx':
+  ensure => 'present',
 
 # Create a custom config file for Nginx
-file { '/etc/nginx/conf.d/custom.conf':
-  content => "server_tokens off;\nmore_set_headers 'X-Served-By: ${hostname}';",
-  notify => Service['nginx'],
+-> file_line { 'http_header':
+  path  => '/etc/nginx/nginx.conf',
+  match => 'http {',
+  line  => "http {\n\tadd_header X-Served-By \"${hostname}\";",
 }
-
-# Restart Nginx service when custom config file changes
-service { 'nginx':
-  ensure  => running,
-  enable  => true,
-  require => File['/etc/nginx/conf.d/custom.conf'],
+-> exec {'run2':
+  command => '/usr/sbin/service nginx start',
 }
