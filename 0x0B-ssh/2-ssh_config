@@ -1,5 +1,6 @@
 # ssh config file
-Host 54.83.168.42
-      IdentityFile ~/.ssh/school
-      PreferredAuthentications publickey
-      PasswordAuthentication no
+Host web-01
+	Hostname 52.91.135.61
+	User ubuntu
+      	IdentityFile ~/.ssh/school
+      	PasswordAuthentication no
