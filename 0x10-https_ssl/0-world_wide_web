@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Configure your domain zone so that the subdomain www points
+# to your load-balancer IP (lb-01)
+
+# Function to display record info for a subdomain
+display_record_info() {
+	subdomain="$1"
+	record_type="$2"
+	destination="$3"
+	echo "The subdomain $subdomain is a $record_type record and points to $destination"
+}
+
+#check the arguments
+if [ $# -lt 1 ]; then
+	echo "Usage: $0 domain [subdomain]"
+	exit 1
+fi
+
+domain="$1"
+
+if [ $# -ge 2 ]; then
+	subdomain="$2"
+else
+	subdomain="www lb-01 web-01 web-02"
+fi
+
+#loop over the subdomain and print their info
+for sd in $subdomain; do
+	info=$(dig +short $sd.$domain)
+	if [ -n "$info" ]; then
+		record-type=$(dig +short $sd.$domain | awk '{print $1}')
+		destination=$(dig +short $sd.$domain | awk '{print $2}')
+		display_record_info "$sd" "$record_type" "$destination"
+	fi
+done
