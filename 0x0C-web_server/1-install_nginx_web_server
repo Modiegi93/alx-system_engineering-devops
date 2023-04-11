@@ -1,33 +1,19 @@
 #!/usr/bin/env bash
 # Install nginx on web server; Nginx should be listening on port 80
 
-sudo apt-get update -y && \
-sudo apt-get install -y nginx
-if [ $? -eq 0 ]
-then
-    echo -e \
-"http {
-    root /var/www/school;
-    index index.html;
-    server {
+# Update package list
+apt-get update
+
+# Install Nginx
+apt-get install nginx -y
+
+# Configure Nginx to listen on port 80
+echo "server {
         listen 80;
-        location \ {
+        location / {
+                echo 'Hello World!';
         }
-    }
-}
-events {
-}" > /etc/nginx/nginx.conf
-    mkdir -p /var/www/school
-    echo "Hello World!" > \
-	/var/www/school/index.html
-    service nginx start
-    if [ $? -ne 0 ]
-    then
-	"Problem starting nginx"
-	exit 1
-    fi
-else
-    echo "Could not install nginx"
-    exit 1
-fi
-exit 0
+}" > /etc/nginx/sites-available/default
+
+# Restart Nginx
+service nginx restart
