@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Configure your domain zone so that the subdomain www points
+# to your load-balancer IP (lb-01)
+
+# variables & parameters
+subdomains=( "www" "lb-01" "web-01" "web-02" )
+domain="$1"
+sub="$2"
+
+display_record_info () {
+	# func variables
+	sub="$2"
+	INFO="$(dig "$sub.$domain" | grep -A1 'ANSWER SECTION:' | awk 'NR==2')"
+	IP=$(echo "$INFO" | awk '{print $5}')
+	RECORD=$(echo "$INFO" | awk '{print $4}')
+
+	echo "The subdomain $sub is a $RECORD record and points to $IP"
+}
+
+if [ $# -eq 1 ]; then
+	for subs in "${subdomains[@]}"; do
+		display_record_info "$domain" "$subs"
+	done
+elif [ $# -eq 2 ]; then
+	display_record_info "$domain" "$sub"
+fi
