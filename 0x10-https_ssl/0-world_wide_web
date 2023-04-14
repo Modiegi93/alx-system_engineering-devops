@@ -14,7 +14,7 @@ display_record_info () {
 	IP=$(echo "$INFO" | awk '{print $5}')
 	RECORD=$(echo "$INFO" | awk '{print $4}')
 
-	echo "The subdomain $sub is a $RECORD record and points to $IP"
+	echo -e "The subdomain $sub is a $RECORD record and points to $IP"
 }
 
 if [ $# -eq 1 ]; then
