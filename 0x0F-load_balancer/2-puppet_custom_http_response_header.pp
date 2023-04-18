@@ -1,10 +1,13 @@
-# Install Nginx package
-exec {'update':
-  command => '/usr/bin/apt-get update',
+# Setup New Ubuntu server with nginx
+# and add a custom HTTP header
+
+exec { 'update system':
+        command => '/usr/bin/apt-get update',
 }
--> package {'nginx':
-  ensure => 'installed,
-  require => Exec['update system']
+
+package { 'nginx':
+	ensure => 'installed',
+	require => Exec['update system']
 }
 
 file {'/var/www/html/index.html':
@@ -24,4 +27,26 @@ exec {'HTTP header':
 service {'nginx':
 	ensure => running,
 	require => Package['nginx']
+
+exec { 'update':
+  command  => 'sudo apt-get update',
+  provider => shell,
+}
+
+package { 'nginx':
+  ensure  => installed,
+  require => Exec['update'],
+}
+
+file_line { 'headercustom':
+  ensure  => present,
+  path    => '/etc/nginx/sites-available/default',
+  after   => ':80 default_server;',
+  line    => "add_header X-Served-By ${hostname};",
+  require => Package['nginx'],
+}
+
+service { 'nginx':
+  ensure  => running,
+  require => File_line['headercustom'],
 }
