@@ -2,7 +2,8 @@
 """Queries the Reddit API and returns the number of subscribers
 """
 import requests
-
+import json
+import sys
 
 def number_of_subscribers(subreddit):
     """Returns the number of subscribers for a given subreddit"""
